@@ -4,7 +4,7 @@
 
 ## Table of contents
 
-1. [개발환경 셋팅하기](#개발환경 셋팅하기)
+1. [개발환경 셋팅하기](#1개발환경 셋팅하기)
    1. Typescript(>3.8.*) 설치
    2. google/gts설치
    3. 메서드 작성하기
@@ -27,15 +27,15 @@
 4. 도커로 올려보기
    1. 가상화와 docker에 대해 이해하기
    2. docker 기초 실습
-   3. Dockerfile 작성
-   4. 이미지 빌드하기
-   5. 컨테이너 생성하기
-   6. 컨테이너랑 볼륨 만들기
-   7. 컨테이너들끼리 연결하기
-   8. docker를 여러개를 한번에 켜고 끄기
-   9. docker-compose.yml 작성
-   10. docker-compose 명령어 쓰기
-   11. docker로 만든 서비스 올리기(데이터베이스 포함)
+      1. Dockerfile 작성
+      2. 이미지 빌드하기
+      3. 컨테이너 생성하기
+      4. 컨테이너랑 볼륨 만들기
+      5. 컨테이너들끼리 연결하기
+   3. docker를 여러개를 한번에 켜고 끄기
+      1. docker-compose.yml 작성
+      2. docker-compose 명령어 쓰기
+      3. docker로 만든 서비스 올리기(데이터베이스 포함)
 
 5. ElasticBeanstalk로 서비스 올리기
    1. user 권한 생성하기
@@ -44,5 +44,6 @@
    4. eb create
    5. eb deploy
 
+***
 
-## 개발환경 셋팅하기
+## 1.개발환경 셋팅하기
