@@ -5,10 +5,10 @@
 ## Table of contents
 
 1. [개발환경 셋팅하기](../../#1개발환경-셋팅하기)
-   1. [Typescript](../../#i.Typescript)
-   2. [lint](../../#ii.lint)
-   3. [js와 ts 비교](../../#iii.js와-ts-비교)
-   4. [테스트(jest)](../../#iv.테스트(jest))
+   1. [Typescript](../../#itypescript)
+   2. [lint](../../#iilint)
+   3. [js와 ts 비교](../../#iiijs와-ts-비교)
+   4. [테스트(jest)](../../#iv테스트jest)
 
 2. 서버 프레임워크
    1. express
