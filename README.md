@@ -119,7 +119,7 @@ console.log(calculator.add('a', 'b')); // 4. 코드상 오류로 걸림 - 파라
 
 `.vscode/launch.json`
 
-```json
+```javascript
 {
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
