@@ -1,0 +1,11 @@
+{
+  "eslint.format.enable": true,
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.alwaysShowStatus": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": true
+  },
+  "javascript.format.enable": true,
+  "typescript.format.enable": true
+}
