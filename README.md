@@ -38,7 +38,7 @@
       3. docker로 만든 서비스 올리기(데이터베이스 포함)
 
 5. ElasticBeanstalk로 서비스 올리기
-   1. user 권한 생성하기
+   1. IAM으로 권한 생성하기
    2. eb 설치하기 또는 도커로 해보기
    3. eb init
    4. eb create
