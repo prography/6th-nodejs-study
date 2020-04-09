@@ -73,7 +73,7 @@ npx tsc
 
 ### ii.lint
 
-lint는 code-style 규칙을 정해서, 규칙에 맞지 않으면 맞지 않은 것을 알려주거나 `fix` 명령어를 통해 한번에 강제로 맞춰서 코드의 일관성을 유지하는 강력한 도구 입니다. 젯브레인 에디터(안드로이드 스튜디오, 인텔리제이 등)을 사용하시는 분들이라면 `Ctrl + Alt + L`을 사용하는 것이라고 생각하면 됩니다.(젯브레인 코드스타일이 있음) 이 스터디에서는 `VSCODE`를 사용하기 때문에, lint를 도와주는 라이브러리 설치가 필요합나다. [eslint](https://www.npmjs.com/package/eslint)와 [prettier](https://www.npmjs.com/package/prettier)를 받아주세요.
+lint는 code-style 규칙을 정해서, 규칙에 맞지 않으면 맞지 않은 것을 알려주거나 `npx eslint --fix` 명령어를 통해 한번에 강제로 맞춰서 코드의 일관성을 유지하는 강력한 도구 입니다. 젯브레인 에디터(안드로이드 스튜디오, 인텔리제이 등)을 사용하시는 분들이라면 `Ctrl + Alt + L`을 사용하는 것이라고 생각하면 됩니다.(젯브레인 코드스타일이 있음) 이 스터디에서는 `VSCODE`를 사용하기 때문에, lint를 도와주는 라이브러리 설치가 필요합나다. [eslint](https://www.npmjs.com/package/eslint)와 [prettier](https://www.npmjs.com/package/prettier)를 받아주세요.
 
 ```bash
 # eslint, prettier 설치
