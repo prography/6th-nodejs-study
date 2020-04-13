@@ -10,11 +10,10 @@
    3. [lint](../../#iilint)
    4. [테스트(jest)](../../#iv테스트jest)
 
-2. 서버 프레임워크
-   1. express
-   2. lowdb 설치
-   3. 첫번째 CRUD
-   4. e2e 테스트
+2. [서버](../../#2서버)
+   1. [서버 만들기](../../#i서버-만들기)
+   2. [첫번째 CRUD](../../#첫번째-CRUD)
+   3. [e2e 테스트](../../e2e-테스트)
 
 3. 데이터베이스 사용하기
    1. mariadb
@@ -48,7 +47,7 @@
 
 ## 1.개발환경 셋팅하기
 
-NodeJS 개발 환경은 사실 nodejs만 설치하면 끝입니다.~~꼭 블로그 따라하면 실행 안됨~~ 마냥 따라 설치하면 되더라. 보다는 왜 설치하는지 알고 설치를 하면 좋습니다. 이 스터디에서는 기본 node에서 나아가 타입을 적용합니다. 다음의 스크립트 순서대로 `Typescript`, `google/gts`, `jest` 각각 설치합니다.
+NodeJS 개발 환경은 사실 nodejs만 설치하면 끝입니다.~~꼭 블로그 따라하면 실행 안됨~~ 마냥 따라 설치하면 되더라. 보다는 왜 설치하는지 알고 설치를 하면 좋습니다. 이 스터디에서는 기본 node에서 나아가 타입을 적용합니다. 다음의 스크립트 순서대로 `Typescript`, `eslint`, `jest` 각각 설치합니다.
 
 ### i.Typescript
 
@@ -115,11 +114,11 @@ console.log(calculator.add('a', 'b')); // 4. 코드상 오류로 걸림 - 파라
 
 ### ii.lint
 
-lint는 code-style 규칙을 정해서, 규칙에 맞지 않으면 맞지 않은 것을 알려주거나 `npx eslint --fix` 명령어를 통해 한번에 강제로 맞춰서 코드의 일관성을 유지하는 강력한 도구 입니다. 젯브레인 에디터(안드로이드 스튜디오, 인텔리제이 등)을 사용하시는 분들이라면 `Ctrl + Alt + L`을 사용하는 것이라고 생각하면 됩니다.(젯브레인 코드스타일이 있음) 이 스터디에서는 `VSCODE`를 사용하기 때문에, lint를 도와주는 라이브러리 설치가 필요합나다. [eslint](https://www.npmjs.com/package/eslint)와 [prettier](https://www.npmjs.com/package/prettier)를 받아주세요.
+미리 에러가 나는 것을 방지해주는 typescript도 있지만, 코드 스타일을 예쁘게 만들어주는 툴도 있습니다. lint는 코드 스타일 규칙을 정해서, 규칙에 맞지 않으면 맞지 않은 것을 알려주거나 `npx eslint --fix` 명령어를 통해 한번에 코드의 일관성을 유지할 수 있는 강력한 도구 입니다. 젯브레인 에디터(안드로이드 스튜디오, 인텔리제이 등)을 사용하시는 분들이라면 `Ctrl + Alt + L`을 사용하는 것이라고 생각하면 됩니다.(젯브레인 코드스타일이 있음) 이 스터디에서는 `VSCODE`를 사용하기 때문에, lint를 도와주는 라이브러리 설치가 필요합나다. [eslint](https://www.npmjs.com/package/eslint)와 [prettier](https://www.npmjs.com/package/prettier)를 받아주세요.
 
 ```bash
 # eslint, prettier 설치
-npm run --save-dev eslint prettier
+npm install --save-dev eslint prettier
 
 # eslint 초기화
 npx eslint --init
@@ -148,13 +147,34 @@ npx eslint --fix
 ```bash
 # jest, ts-jest 설치
 npm install --save-dev jest ts-jest
+
+# jest.config.js 파일 생성
+npx jest --init
+
 ```
 
-테스트 프레임워크를 설치하고 끝이 아닙니다. vscode에서는 테스트 실행스크립트를 작성해야 에디터에서 실행하고 디버깅 툴을 사용할 수 있습니다.
+`jest.config.js` 파일에 ts-jest 설정을 해줘야 하는데, 이 [파일](./jest.config.js)을 보고 수정하면 될 것 같습니다.
+`tests` 폴더를 생성하고 테스트 파일을 작성해줍니다. `tests/Calculator.spec.ts`을 작성합니다.
 
-다음의 스크립트를 추가 해야합니다.
+```typescript
+import { Calculator } from '../src/Calculator';
 
-`.vscode/launch.json`
+describe('test start', () => {
+  const calculator = new Calculator();
+  test('calculator.add', () => {
+    expect(calculator.add(1, 2)).toBe(3);
+  });
+});
+```
+
+이제 테스트를 실행해 보세요
+
+```bash
+# test 실행
+npx jest
+```
+
+명령어 뿐만 아니라 테스트를 vscode에서 버튼으로 실행시킬 수 있습니다. vscode에서 테스트 실행 환경을 정의해야합니다. `.vscode/launch.json` 를 만들고 아래의 코드를 넣어주세요.
 
 ```javascript
 {
@@ -197,4 +217,22 @@ npm install --save-dev jest ts-jest
 
 ```
 
+테스트 메서드는 이것 말고도 굉장히 다양하게 있는데, 더 궁금하다면 [jest 홈페이지](https://jestjs.io)를 참고해주세요
 ***
+
+## 서버 프레임워크
+
+이제 서버를 만듭니다. 타입을 썼을 때 도움이 많이 되는 라이브러리를 이용해보겠습니다. 아래의 라이브러리들을 받아주세요
+
+- [express](https://www.npmjs.com/package/express)
+- [routing-controllers](https://github.com/typestack/routing-controllers)
+- [class-validator](https://github.com/typestack/class-validator)
+- [class-transformer](https://github.com/typestack/class-transformer)
+
+```bash
+
+npm i --save express reflect-metadata routing-controllers class-validator class-transformer
+
+npm i --save-dev @types/express
+
+```
