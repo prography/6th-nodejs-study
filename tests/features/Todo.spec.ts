@@ -1,36 +1,26 @@
-import { app } from '../../src/app';
 import supertest from 'supertest';
+import { app } from '../../src/app';
 
-const agent = supertest(app);
-
-describe('test todo', () => {
-  let todoId = 1;
-
-  test('create', async () => {
-    const response = await agent.post('/todos');
-    todoId = response.body.data.id || todoId;
-    expect(response.status).toBe(200);
+const assertItem = item => {
+  const expectedKeys = ['id', 'title', 'description', 'author'];
+  Object.keys(item).forEach(key => {
+    const idx = expectedKeys.indexOf(key);
+    if (idx > -1) {
+      expectedKeys.splice(idx, 1);
+    }
   });
+  expect(expectedKeys).toBe([]);
+};
 
-  test('index', async () => {
-    const response = await agent.get('/todos');
-    expect(response.status).toBe(200);
-  });
+describe('test Todo', () => {
+  const client = supertest(app);
 
-  test('retrieve', async () => {
-    const response = await agent.get(`/todos/${todoId}`);
+  test('test index todos', async () => {
+    const response = await client.get('/todos');
     expect(response.status).toBe(200);
-  });
-
-  test('update', async () => {
-    const response = await agent.put(`/todos/${todoId}`).send({
-      name: 'updated name',
-    });
-    expect(response.status).toBe(200);
-  });
-
-  test('delete', async () => {
-    const response = await agent.delete(`/todos/${todoId}`);
-    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    for (const item of response.body) {
+      assertItem(item);
+    }
   });
 });

@@ -232,7 +232,132 @@ npx jest
 ```bash
 
 npm i --save express reflect-metadata routing-controllers class-validator class-transformer
-
 npm i --save-dev @types/express
 
 ```
+
+`routing-controllers`문서를 보면 간단하게 따라할 수 있습니다.
+
+`src/app.ts`
+
+```typescript
+import express from 'express';
+import { useExpressServer } from 'routing-controllers';
+
+const app = express();
+
+useExpressServer(app, {
+  controllers: [`${__dirname}/controllers/**`]
+})
+
+export {
+  app
+}
+```
+
+`src/index.ts`
+
+```typescript
+import { app } from './app';
+
+app.listen(3000, () => {
+  console.log(`server is running on ${3000}`);
+})
+```
+
+`src/controllers/TodoController.ts`
+
+```typescript
+import { BaseController } from './BaseController';
+import { JsonController, Get, Param } from 'routing-controllers';
+
+@JsonController('/todos')
+export class TodoController extends BaseController {
+  @Get()
+  public index() {
+    return [
+      {
+        id: 1,
+        title: 'first task',
+        description: 'create express app'
+      }
+    ]
+  }
+
+  @Get('/:todoId')
+  public retrieve(@Param('todoId') todoId: number) {
+    return {
+      id: todoId,
+      title: 'new todo title',
+      description: 'todo description',
+    }
+  }
+}
+```
+
+`npx tsc && node dist`를 통해서 서버 실행하는 것을 알 수 있습니다. 
+
+이제 만들어진 서버를 테스트 하는 방법을 알아봅니다. `jest` 환경에 더불어서 `supertest` 를 설치하여 서버 테스트를 해보겠습니다.
+
+```bash
+npm i --save supertest
+npm i --save-dev @types/supertest
+```
+
+`tests/features/Todo.spec.ts`
+
+```typescript
+import supertest from 'supertest';
+import { app } from '../../src/app';
+
+describe('test Todo', () => {
+  const client = supertest(app);
+
+  test('test index todos', async () => {
+    const response = await client.get('/todos');
+    // 기본 상태코드로 테스트
+    expect(response.status).toBe(200);
+    // 응답 내용이 배열인지 구분하는 테스트
+    expect(Array.isArray(response.body)).toBe(true);
+  })
+})
+```
+
+위의 테스트 코드를 실행시켜보면 서버가 잘 작동하는 지 알 수 있습니다.
+좀더  deep하게 테스트를 한다면, 응답의 내용에 원하는 키값이 잘 들어 있는지 판단해볼 수 있습니다.
+
+
+`tests/features/Todo.spec.ts`
+
+```typescript
+import supertest from 'supertest';
+import { app } from '../../src/app';
+
+// 키값이 모두 있는지 검사하는 함수를 생성
+const assertItem = (item) => {
+  const expectedKeys = ['id', 'title', 'description'];
+  Object.keys(item).forEach((key) => {
+    const idx = expectedKeys.indexOf(key);
+    if (idx > -1) {
+      expectedKeys.splice(idx, 1);
+    }
+  })
+  expect(expectedKeys).toBe([]);
+}
+
+describe('test Todo', () => {
+  const client = supertest(app);
+
+  test('test index todos', async () => {
+    const response = await client.get('/todos');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    // 배열 내의 모든 아이템에 대하여 검사
+    for (const item of response.body) {
+      assertItem(item);
+    }
+  })
+})
+```
+
+여기까지 서버를 테스트 하는 방법을 알아봤습니다.

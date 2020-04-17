@@ -1,40 +1,25 @@
 import { BaseController } from './BaseController';
-import { JsonController, Get, Post, Put, Delete } from 'routing-controllers';
+import { JsonController, Get, Param } from 'routing-controllers';
 
 @JsonController('/todos')
 export class TodoController extends BaseController {
   @Get()
   public index() {
-    return {
-      data: [],
-    };
+    return [
+      {
+        id: 1,
+        title: 'must do',
+        description: 'how to create express app',
+      },
+    ];
   }
 
-  @Post()
-  public create() {
+  @Get('/:todoId')
+  public retrieve(@Param('todoId') todoId: number) {
     return {
-      data: {},
-    };
-  }
-
-  @Get('/:userId')
-  public retrieve() {
-    return {
-      data: {},
-    };
-  }
-
-  @Put('/:userId')
-  public update() {
-    return {
-      data: {},
-    };
-  }
-
-  @Delete('/:userId')
-  public delete() {
-    return {
-      data: {},
+      id: todoId,
+      title: 'sdfsdf',
+      description: 'blah blah',
     };
   }
 }
