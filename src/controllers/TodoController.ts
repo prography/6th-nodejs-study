@@ -5,6 +5,8 @@ import {
   Param,
   Post,
   BodyParam,
+  Put,
+  Delete,
 } from 'routing-controllers';
 import { PrismaClient } from '@prisma/client';
 
@@ -38,5 +40,25 @@ export class TodoController extends BaseController {
         description,
       },
     });
+  }
+
+  @Put('/:todoId')
+  public async update(
+    @Param('todoId') todoId: number,
+    @BodyParam('title') title: string,
+    @BodyParam('description') description: string
+  ) {
+    return this.client.todo.update({
+      where: { id: Number(todoId) },
+      data: {
+        title,
+        description,
+      },
+    });
+  }
+
+  @Delete('/:todoId')
+  public async delete(@Param('todoId') todoId: number) {
+    return this.client.todo.delete({ where: { id: Number(todoId) } });
   }
 }
