@@ -1,25 +1,43 @@
 import { BaseController } from './BaseController';
-import { JsonController, Get, Param } from 'routing-controllers';
+import {
+  JsonController,
+  Get,
+  Param,
+  Post,
+  Body,
+  BodyParam,
+} from 'routing-controllers';
+import { PrismaClient } from '@prisma/client';
 
 @JsonController('/todos')
 export class TodoController extends BaseController {
+  private client: PrismaClient;
+
+  constructor() {
+    super();
+    this.client = new PrismaClient();
+  }
+
   @Get()
   public index() {
-    return [
-      {
-        id: 1,
-        title: 'must do',
-        description: 'how to create express app',
-      },
-    ];
+    return this.client.todo.findMany();
   }
 
   @Get('/:todoId')
   public retrieve(@Param('todoId') todoId: number) {
-    return {
-      id: todoId,
-      title: 'sdfsdf',
-      description: 'blah blah',
-    };
+    return this.client.todo.findOne({ where: { id: Number(todoId) } });
+  }
+
+  @Post()
+  public async create(
+    @BodyParam('title') title: string,
+    @BodyParam('description') description: string
+  ) {
+    return this.client.todo.create({
+      data: {
+        title,
+        description,
+      },
+    });
   }
 }
