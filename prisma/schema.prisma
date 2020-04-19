@@ -1,0 +1,18 @@
+datasource postgresql {
+  url      = env("DB_URL")
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Todo {
+  id          Int      @default(autoincrement()) @id
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  title       String
+  description String?
+
+  @@map("todos")
+}
