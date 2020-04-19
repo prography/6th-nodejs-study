@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Post,
-  Body,
   BodyParam,
 } from 'routing-controllers';
 import { PrismaClient } from '@prisma/client';
