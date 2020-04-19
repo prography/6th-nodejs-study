@@ -4,7 +4,9 @@
   "description": "프로그라피 6기 nodejs 스터디 레포입니다. 이 스터디는 `Typescript`와 `express`를 활용한 서버 애플리케이션 제작을 목표로 하는 서버 기초 스터디입니다. node 버젼은 최신LTS인 12(작성일 기준 12.16.1)로 합니다. 컴퓨터에 없으다면 미리 준비해오기 바랍니다. 설치 방법은 각 OS별로 다르니 확인후에 설치하면 됩니다.([nodejs 공홈](https://nodejs.org/ko/)) 에디터는 국룰 [VSCODE](https://code.visualstudio.com/)를 기준으로 진행합니다.(코드 포맷 자동완성)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node ./dist",
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,17 @@
     "url": "https://github.com/prography/6th-nodejs-study/issues"
   },
   "homepage": "https://github.com/prography/6th-nodejs-study#readme",
+  "nodemonConfig": {
+    "watch": [
+      "src/*"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "**/*.spec.ts",
+      ".env"
+    ],
+    "exec": "ts-node ./src"
+  },
   "devDependencies": {
     "@prisma/cli": "^2.0.0-beta.2",
     "@types/dotenv": "^8.2.0",
