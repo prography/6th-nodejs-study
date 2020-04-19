@@ -12,16 +12,12 @@
 
 2. [서버](../../#2서버)
    1. [서버 만들기](../../#i서버-만들기)
-   2. [첫번째 CRUD](../../#첫번째-CRUD)
-   3. [e2e 테스트](../../e2e-테스트)
+   2. [e2e 테스트](../../iie2e-테스트)
 
-3. 데이터베이스 사용하기
-   1. mariadb
-   2. prisma 설치
-   3. prisma 학습
-   4. User 모델을 생성하고 로그인 기능 개발하기
-   5. 암호화 모듈로 사용자의 정보 암호화 하기
-   6. e2e 테스트 작성
+3. [데이터베이스 사용하기](../../#3데이터베이스-사용하기)
+   1. [prisma](../../#iprisma)
+   2. [CRUD 개발](../../#iiCRUD-개발)
+   3. [e2e 테스트](../../#iiie2e-테스트)
 
 4. 도커로 올려보기
    1. 가상화와 docker에 대해 이해하기
@@ -220,7 +216,7 @@ npx jest
 테스트 메서드는 이것 말고도 굉장히 다양하게 있는데, 더 궁금하다면 [jest 홈페이지](https://jestjs.io)를 참고해주세요
 ***
 
-## 서버 프레임워크
+## 1서버 프레임워크
 
 이제 서버를 만듭니다. 타입을 썼을 때 도움이 많이 되는 라이브러리를 이용해보겠습니다. 아래의 라이브러리들을 받아주세요
 
@@ -235,6 +231,8 @@ npm i --save express reflect-metadata routing-controllers class-validator class-
 npm i --save-dev @types/express
 
 ```
+
+### i.서버 만들기
 
 `routing-controllers`문서를 보면 간단하게 따라할 수 있습니다.
 
@@ -296,6 +294,8 @@ export class TodoController extends BaseController {
 ```
 
 `npx tsc && node dist`를 통해서 서버 실행하는 것을 알 수 있습니다. 
+
+### ii.e2e 테스트
 
 이제 만들어진 서버를 테스트 하는 방법을 알아봅니다. `jest` 환경에 더불어서 `supertest` 를 설치하여 서버 테스트를 해보겠습니다.
 
@@ -361,3 +361,153 @@ describe('test Todo', () => {
 ```
 
 여기까지 서버를 테스트 하는 방법을 알아봤습니다.
+
+## 3.데이터베이스 사용하기
+
+서버를 만들면 클라이언트(프론트)와 여러 데이터 통신이 오가야합니다. 이 과정에서 저장해야되는 데이터가 생기는데 저장을 위해서 Mysql, MariaDB, Postgres, MongoDB 등의 데이터베이스를 사용해야 저장과 데이터 검색이 용이해 집니다. 목적에 따라서 RDB 또는 NoSQL을 선택할 수 있고, 쿼리를 편하게 쓰기 위해서 ORM을 사용하기도 합니다. 이 스터디에서는 ORM은 아니지만, 데이터베이스 사용이 용이한 `prisma`를 다뤄봅니다.
+
+### i.prisma
+
+다음의 라이브러리를 설치해봅니다.
+
+- [prisma](https://www.prisma.io/)
+
+prisma는 특이하게 아래처럼 두개의 라이브러릴 따로 받아서 사용합니다.
+
+```bash
+npm install --save-dev @prisma/cli
+npm install --save @prisma/client
+```
+
+이제 모델파일을 만들어봅니다. url에 들어가는 내용은 데이터베이스 접근 uri schema로 만듭니다. `mysql://{ID}:{PASSORD}@{ENDPOINT}/{DATABASE}` 의 형식으로 작성할 수 있습니다. 아래는 위의 url을 환경변수에서 가져온다는 코드입니다.
+
+```prisma
+datasource mysql {
+  url      = env("DB_URL")
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Todo {
+  id          Int      @default(autoincrement()) @id
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @map("updated_at") @updatedAt
+  title       String
+  description String?
+
+  @@map("todos")
+}
+```
+
+prisma는 `.prisma` 형식의 파일을 만들어서 모델을 관리하고 `npx prisma migrate save`로 마이그레이션을 관리할 수 있고, `npx prisma migrate up` 과 `npx prisma migrate down` 으로 실제 데이터베이스에 반영할 수 있습니다.
+
+모델 파일(`.prisma`)이 정의 되어 있는 상태에서 `npx prisma generate` 를 사용하여, 모델 타이핑을 생성할 수 있습니다. 데이터베이스를 접근하는 타이핑이 생성되어서 코딩이 편해집니다.
+
+아래 와 같은 방법으로 데이터베이스에 접근할 수 있습니다.
+
+```typescript
+const client = new PrismaClient();
+await client.todo.create({
+  data: {
+    title: 'New Todo Item',
+    description: 'do something!'
+  },
+});
+```
+
+### ii.CRUD 개발
+
+```typescript
+
+import { BaseController } from './BaseController';
+import {
+  JsonController,
+  Get,
+  Param,
+  Post,
+  BodyParam,
+  Put,
+  Delete,
+} from 'routing-controllers';
+import { PrismaClient } from '@prisma/client';
+
+@JsonController('/todos')
+export class TodoController extends BaseController {
+  private client: PrismaClient;
+
+  constructor() {
+    super();
+    this.client = new PrismaClient();
+  }
+
+  @Get()
+  public index() {
+    return this.client.todo.findMany();
+  }
+
+  @Get('/:todoId')
+  public retrieve(@Param('todoId') todoId: number) {
+    return this.client.todo.findOne({ where: { id: Number(todoId) } });
+  }
+
+  @Post()
+  public async create(
+    @BodyParam('title') title: string,
+    @BodyParam('description') description: string
+  ) {
+    return this.client.todo.create({
+      data: {
+        title,
+        description,
+      },
+    });
+  }
+
+  @Put('/:todoId')
+  public async update(
+    @Param('todoId') todoId: number,
+    @BodyParam('title') title: string,
+    @BodyParam('description') description: string
+  ) {
+    return this.client.todo.update({
+      where: { id: Number(todoId) },
+      data: {
+        title,
+        description,
+      },
+    });
+  }
+
+  @Delete('/:todoId')
+  public async delete(@Param('todoId') todoId: number) {
+    return this.client.todo.delete({ where: { id: Number(todoId) } });
+  }
+}
+
+```
+
+### iii.e2e 테스트
+
+실제로 데이터가 저장이 잘 되었는지 테스트를 작성해보겠습니다. 엔드포인트로 요청을 넣었을 때, 실제로 디비에 저장이 되었는지를 확인할 수 있습니다.
+
+```typescript
+import supertest from 'supertest';
+import { app } from '../../src/app';
+import { PrismaClient } from '@prisma/client';
+
+describe('test Todo', () => {
+  const client = supertest(app);
+  test('test index todos', async () => {
+    const response = await client.get('/todos');
+    expect(response.status).toBe(200);
+    const actual = await new PrismaClient().todo.findOne({
+      where: { id: Number(response.body.id) },
+    });
+    expect(actual.description).toBe(response.body.description);
+    expect(actual.title).toBe(response.body.title);
+  });
+});
+```
