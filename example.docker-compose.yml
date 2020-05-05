@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - "HOST_PORT:CONTAINER_PORT"
+    environment:
+      MYSQL_ROOT_PASSWORD: ROOT_PASSWORD
+      MYSQL_DATABASE: DATABASE
+      MYSQL_USER: USER
+      MYSQL_PASSWORD: PASSWORD
+    restart: on-failure
+
+  server:
+    build: .
+    ports:
+      - "HOST_PORT:CONTAINER_PORT"
+    environment:
+      DB_URL: DB_URL
