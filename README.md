@@ -19,18 +19,14 @@
    2. [CRUD 개발](../../#iiCRUD-개발)
    3. [e2e 테스트](../../#iiie2e-테스트)
 
-4. 도커로 올려보기
-   1. 가상화와 docker에 대해 이해하기
-   2. docker 기초 실습
-      1. Dockerfile 작성
-      2. 이미지 빌드하기
-      3. 컨테이너 생성하기
-      4. 컨테이너랑 볼륨 만들기
-      5. 컨테이너들끼리 연결하기
-   3. docker를 여러개를 한번에 켜고 끄기
-      1. docker-compose.yml 작성
-      2. docker-compose 명령어 쓰기
-      3. docker로 만든 서비스 올리기(데이터베이스 포함)
+4. [도커로 올려보기](../../#4도커로-올려보기)
+   1. [가상화와 도커에 대해 이해하기](../../#i가상화와-도커에-대해-이해하기)
+   2. [도커 기초 실습](../../i도커-기초-실습)
+      1. [Dockerfile 작성](../../aDockerfile-작성)
+      2. [이미지 빌드하기](../../b이미지-빌드하기)
+      3. [컨테이너 생성하기](../../c컨테이너-생성하기)
+   3. [도커 여러개를 한번에 켜고 끄기](../../ii도커-여러개를-한번에-켜고-끄기)
+      1. [docker-compose.yml 작성](../../adocker-compose.yml-작성)
 
 5. ElasticBeanstalk로 서비스 올리기
    1. IAM으로 권한 생성하기
@@ -510,4 +506,214 @@ describe('test Todo', () => {
     expect(actual.title).toBe(response.body.title);
   });
 });
+```
+
+## 4.도커로 올려보기
+
+### i.가상화와 도커에 대해 이해하기
+
+얕은지식으로 쓰는 것보단 잘 설명되어 있는 블로그를 통해 학습을 하면 좀더 편할 것 같습니다.
+
+- [초보를 위한 도커 안내서 - 도커란 무엇인가?](https://subicura.com/2017/01/19/docker-guide-for-beginners-1.html)
+- [초보를 위한 도커 안내서 - 설치하고 컨테이너 실행하기](https://subicura.com/2017/01/19/docker-guide-for-beginners-2.html)
+- [초보를 위한 도커 안내서 - 이미지 만들고 배포하기](https://subicura.com/2017/02/10/docker-guide-for-beginners-create-image-and-deploy.html)
+
+다른 가상환경이랑 이해하는 방법은 같은데, 우리는 아래 3가지만 하면 됩니다.
+
+1. Dockerfile 작성
+2. 도커 이미지 생성
+3. 도커 컨테이너 생성
+
+### ii.도커 기초 실습
+
+#### a.Dockerfile 작성
+
+여러가지 도커파일 명령어들이 있다. 내용은 도커 도큐먼트내에서 확인이 가능하다. [Dockerfile best practice](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)을 쓰윽 읽어보면 좋을 것 같다.
+
+이 스터디에서 작성한 도커파일을 보자
+
+```Dockerfile
+# 은 주석을 쓸 수 있다.
+
+# 다른 이미지를 상속받아 구현한다. node 버젼 12를 가지고 있는 이미지를 받는다.
+FROM node:12
+
+# 도커파일 내에서 사용하는 변수 선언
+ARG PROJECT_PATH=/web/service/api
+
+# 현재 디렉토리에서 이미지로 파일 복사
+COPY package.json ${PROJECT_PATH}/package.json
+COPY package-lock.json ${PROJECT_PATH}/package-lock.json
+
+# 명령어를 기본 실행하는 컨테이너 내부 경로 설정(아까 ARG로 설정한 내용을 쓴다)
+WORKDIR ${PROJECT_PATH}
+
+# 명령어 실행
+RUN npm install
+
+# 프로젝트 파일 복사(ADD와 COPY 두가지 명령어가 복사라는 역할을 하는데 둘의 차이는 문서에서 확인해보자)
+COPY . ${PROJECT_PATH}
+
+# 프로젝트 빌드
+RUN npm run build
+
+# 도커 외부에 보여줄 이 컴퓨터가 제공할 포트 정의
+EXPOSE 3000
+
+# 컨테이너가 실행 될 때 처음에 실행할 명령어 정의 같은 역할을 하는 ENTRYPOINT가 있다. 문서에서 둘의 차이가 무엇인지 찾아보자
+CMD ["npm", "start"]
+
+```
+
+#### b.이미지 빌드하기
+
+위에서 작성한 내용을 빌드합니다. 빌드는 `docker build`라는 명령어로 할 수 있습니다. 아래와 같은 방법으로 할 수 있습니다.
+
+```bash
+docker build -t {태그} {Dockerfile 경로}
+```
+
+태그는 이미지에 불힐 이름이라고 생각하면 됩니다. 이미지 이름 + 버젼으로도 명시할 수 있습니다. `simple-server:latest`, `simple-server:2` 등등 의 방법으로 이미지 이름과 버젼으로 버젼관리를 할 수 있습니다. 이미지 이름을 안쓰는 경우 무작위 이름을 지어줍니다.
+
+ex)
+
+```bash
+docker build -t simple-server .
+```
+
+#### c.컨테이너 생성하기
+
+컨테이너 생성은 run으로 할 수 있습니다.
+몇가지 옵션을 알아두면 도움이 되겠다.
+
+- `--rm`: 컨테이너가 꺼지면 바로 삭제하는 옵션
+- `-v, --volume`: 컨테이너의 디렉토리와 컴퓨터의 디렉토리를 연결하는 옵션, 환경은 컨테이너, 파일은 컴퓨터를 사용할 수 있다. `-v {컴퓨터 경로}:{컨테이너 경로}`
+- `-p, --publish`: 컨테이너의 포트와 컴퓨터의 포트를 연결하는 옵션, `-p {컴퓨터 포트}:{컨테이너 포트}`
+- `--entrypoint`: 컨테이너 실행시 기존에 Dockerfile에 정의된 `CMD`나 `ENTRYPOINT`를 Overriding 하는 옵션, 실제 서버 실행을 안하고 다른 기능을 수행할 수 있다.
+- `--name`: 컨테이너에 이름을 붙이는 옵션
+- `-it`: 컨테이너를 실행할 때 터미널로 인터랙션(로그 확인 등) 을 할 수 있다.
+- `-d`: `-it`의 반대, detached 옵션, 백그라운드에서만 돌아가도록 설정한다.
+- `--link`: 이미 작동중인 다른 컨테이너에 연결하는 옵션, 이 옵션이 없으면 기본적으로 컨테이너들 끼리 연결이 안된다.
+
+```bash
+docker run {image-name}
+```
+
+ex)
+
+```bash
+docker run -it \
+-p 3000:3000 \
+-v (PWD):/web/service/api \
+--name simple-container \
+simple-server
+```
+
+이후에 컨테이너를 켜고 끄려면
+
+```bash
+# 현재 실행중인 컨테이너 목록
+docker ps
+
+# 모든 컨테이너 목록
+docker ps -a
+
+# 컨테이너 종료(가상 컴퓨터 종료)
+docker stop {컨테이너 ID 또는 이름}
+
+# 컨테이너 시작(가상 컴퓨터 실행)
+docker start {컨테이너 ID 또는 이름}
+
+# 컨테이너 재시작
+docker restart {컨테이너 ID 또는 이름}
+
+# 컨테이너 삭제
+docker rm {컨테이너 ID 또는 이름}
+```
+
+### ii.도커 여러개를 한번에 켜고 끄기
+
+도커 여러개를 한번에 켜고 끌 수 있다. docker-compose.yml을 사용하면 가능한다. 스택이나 팟을 만들어도 가능한데 초보자의 입장에선 이것만으로도 가능하다. 
+
+기본적으로 `--link` 옵션을 사용해야 컨테이너들 끼리 연결이 가능한데, 컨테이너의 종속성이 꼬이는 경우가 생길 수 있다. 이때 도커 네트워크를 만들고 하나의 네트워크에 컨테이너들을 연결해주면 다른 설정을 해주지 않아도 컨테이너끼리 연결이 가능하다.
+
+#### a.docker-compose.yml 작성
+
+[docker-comnpose.yml](./docker-compose.yml) 를 아래처럼 수정해서 써보세요
+```yml
+# docker-compose 버젼
+version: "3.7"
+
+# 컨테이너 목록
+services:
+  # 컨테이너 이름 변수처럼 직접 고르면 된다.
+  db:
+    # 컨테이너에 사용할 이미지
+    image: mysql:latest
+    # 포트 연결 설정
+    ports:
+      - 3306:3306
+    # 컨테이너 실행시에 환경변수 사용
+    environment:
+      MYSQL_ROOT_PASSWORD: 1016
+      MYSQL_DATABASE: sample
+    # 재시작하는 조건
+    restart: on-failure
+    # 컨테이너에 연결할 볼륨 연결
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+    # 네트워크 설정
+    networks:
+      default:
+        ipv4_address: 172.16.2.2
+
+  server:
+    # 컨테이너에 사용할 Dockerfile이 있는 경로, image 대신에 쓰면, 없는 경우 이미지를 자동으로 빌드하고 컨테이너를 생성한다.
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      DB_URL: mysql://root:1016@172.16.2.2/sample
+    # 기본적으로 써있는 CMD나 ENTRYPOINT에 덮어쓸 내용
+    entrypoint: "npm run dev"
+    networks:
+      default:
+        ipv4_address: 172.16.2.3
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.2.0/24
+
+```
+
+위의 파일은 따지고 보면 `docker run` 명령어를 텍스트로 작성해뒀다고 생각하면 된다. 이제 이 파일이 있으면 누구나 손쉬운 명령어로 도커 컨테이너를 켜고 끌 수 있다.
+
+```bash
+# 이미지가 없다면 빌드후 먼테이너 오픈(docker-compose.yml 파일에 변화가 있는 경우 컨테이너 재 생성)
+docker-compose up -d(detached 옵션, 이게 없으면 서버와 디비 모두 콘솔이 켜진 상태가 된다.)
+
+# 컨테이너 종료 후 이미지 삭제(build 옵션의 경우에만)
+docker-compose down
+
+# 컹테이너만 켜고 끄고 재시작
+docker-compose start
+docker-compose stop
+docker-compose restart
+
+# 이미지 빌드만 실행
+docker-compose build
+```
+
+이렇게 할 수 있다.
+
+ex)
+
+```bash
+docker-compose up -d
 ```
