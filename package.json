@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist",
-    "dev": "nodemon"
+    "start": "npm run prisma:generate && node ./dist",
+    "dev": "npm run prisma:migrate && npm run prisma:generate && nodemon",
+    "prisma:generate": "prisma2 generate",
+    "prisma:migrate": "prisma2 migrate up --experimental"
   },
   "repository": {
     "type": "git",
