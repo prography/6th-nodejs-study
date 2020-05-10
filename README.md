@@ -26,7 +26,7 @@
       2. [이미지 빌드하기](../../#b이미지-빌드하기)
       3. [컨테이너 생성하기](../../#c컨테이너-생성하기)
    3. [도커 여러개를 한번에 켜고 끄기](../../#iii도커-여러개를-한번에-켜고-끄기)
-      1. [docker-compose.yml 작성](../../#adocker-compose.yml-작성)
+      1. [docker-compose.yml 작성](../../#adocker-composeyml-작성)
 
 5. ElasticBeanstalk로 서비스 올리기
    1. IAM으로 권한 생성하기
