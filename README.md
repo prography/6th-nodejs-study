@@ -28,12 +28,10 @@
    3. [도커 여러개를 한번에 켜고 끄기](../../#iii도커-여러개를-한번에-켜고-끄기)
       1. [docker-compose.yml 작성](../../#adocker-composeyml-작성)
 
-5. ElasticBeanstalk로 서비스 올리기
-   1. IAM으로 권한 생성하기
-   2. eb 설치하기 또는 도커로 해보기
-   3. eb init
-   4. eb create
-   5. eb deploy
+5. [ElasticBeanstalk로 서비스 배포하기](../../#5ElasticBeanstalk로-서비스-배포하기)
+   1. [IAM으로 권한 생성하기](../../#iIAM으로-권한-생성하기)
+   2. [eb cli 설치하기](../../iieb-cli-설치하기)
+   3. [배포하기](../../iii배포하기)
 
 ***
 
@@ -698,7 +696,7 @@ networks:
 # 이미지가 없다면 빌드후 먼테이너 오픈(docker-compose.yml 파일에 변화가 있는 경우 컨테이너 재 생성)
 docker-compose up -d(detached 옵션, 이게 없으면 서버와 디비 모두 콘솔이 켜진 상태가 된다.)
 
-# 컨테이너 종료 후 이미지 삭제(build 옵션의 경우에만)
+# 컨테이너 종료 후 컨테이너 삭제, 이미지 삭제는 아님!(build 옵션의 경우에만)
 docker-compose down
 
 # 컹테이너만 켜고 끄고 재시작
@@ -717,3 +715,12 @@ ex)
 ```bash
 docker-compose up -d
 ```
+
+
+## 5.ElasticBeanstalk로 서비스 배포하기
+
+### i.IAM으로 권한 생성하기
+
+### ii.eb cli 설치하기
+
+### iii.배포하기
