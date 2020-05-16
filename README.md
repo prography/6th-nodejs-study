@@ -30,8 +30,8 @@
 
 5. [ElasticBeanstalk로 서비스 배포하기](../../#5ElasticBeanstalk로-서비스-배포하기)
    1. [IAM으로 권한 생성하기](../../#iIAM으로-권한-생성하기)
-   2. [eb cli 설치하기](../../iieb-cli-설치하기)
-   3. [배포하기](../../iii배포하기)
+   2. [eb cli 설치하기](../../#iieb-cli-설치하기)
+   3. [배포하기](../../#iii배포하기)
 
 ***
 
@@ -319,7 +319,6 @@ describe('test Todo', () => {
 
 위의 테스트 코드를 실행시켜보면 서버가 잘 작동하는 지 알 수 있습니다.
 좀더  deep하게 테스트를 한다면, 응답의 내용에 원하는 키값이 잘 들어 있는지 판단해볼 수 있습니다.
-
 
 `tests/features/Todo.spec.ts`
 
@@ -715,7 +714,6 @@ ex)
 ```bash
 docker-compose up -d
 ```
-
 
 ## 5.ElasticBeanstalk로 서비스 배포하기
 
