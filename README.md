@@ -722,19 +722,40 @@ docker-compose up -d
 ### i.IAM으로 권한 생성하기
 
 eb는 아마존의 콘솔에서도 생성해서 쓸 수 있다. 하지만 cli로 하기 위해서는 IAM 권한이 필요하다. 권한을 위해 사용자 설정을 해보자
-![IAM 권한 생성](./assets/images/01_iam_1.png)
-[v] 대충 IAM 설정하는 화면
-[ ] 대충 ElasticBeanstalkFullAccess 를 넣는 화면
-[ ] 대충 `aws-access-key` 와 `aws-secret-key`를 확인하는 화면
+
+1. IAM 사용자 추가 버튼 클릭
+  ![IAM 사용자 추가 버튼 클릭](./assets/images/01_iam_1.png)
+
+2. IAM 사용자 이름과 접근 방식 정의
+  ![IAM 사용자 이름과 접근 방식 정의](./assets/images/01_iam_2.png)
+
+3. `ElasticBeanstalkFullAccess` 권한 추가
+  ![ElsaticBeanstalkFullAccess 권한 추가](./assets/images/01_iam_3.png)
+
+4. IAM 사용자 태그(옵션)
+  ![IAM 사용자 태그](./assets/images/01_iam_4.png)
+
+5. IAM 사용자 등록 완료
+  ![IAM 사용자 등록 완료](./assets/images/01_iam_5.png)
+
+6. 사용자 추가 완료 - `aws-access-key` 와 `aws-secret-key`를 기억해두자(복사를 해도 되고, csv 파일을 받아서 저장할 수 있다)
+  ![AccessKey와 SecretKey를 확인하는 화면](./assets/images/01_iam_6.png)
+
 
 ### ii.eb cli 설치하기
 
-eb cli를 로컬환경에서 설치하려면 [eb cli 프로그램 설치](https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/eb-cli3-install-advanced.html)가 필요하다. python3기반의 프로그램이기 때문에 파이썬 설치를 하는게 좋은데, 파이썬을 굳이 설치하기 싫고 Docker가 있다면, 파이썬 컨테이너를 만들어서 설정을 하는 방법도 있다. [참고](https://github.com/geusan/dockerfiles)
+eb cli를 로컬환경에서 설치하려면 [eb cli 프로그램 설치](https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/eb-cli3-install-advanced.html)가 필요하다. 설치할때는 pip를 이용하는게 정신건강에 이롭다. 나는 죽어도 파이썬을 설치하기 싫다면, 파이썬용 도커 컨테이너를 만들어서 설정을 할 수도 있다. [참고](https://github.com/geusan/dockerfiles)
 
-[ ] 대충 ebcli 설치하는 화면
-[ ] 대충 `eb init` 명령어를 실행하는 화면
-[ ] 대충 `eb init` 할때 `aws-access-key`, `aws-secret-key` 를 입력하는 화면
+1. ebcli 설치
+  ![pip를 이용한 ebcli 설치](./assets/images/02_eb_1.png)
 
 ### iii.배포하기
+  
+1. `eb init`으로 권한 설정
+  ![eb init으로 권한 설정](./assets/images/02_eb_2.png)
+  ![eb init으로 권한 설정2](./assets/images/02_eb_3.png)
 
-[ ] 대충 `eb create`로 배포하는 화면
+2. `eb create`로 첫 배포
+  ![eb init으로 권한 설정2](./assets/images/02_eb_4.png)
+
+3. 다시 배포할 때는 `eb deploy`를 쓰면 된다.
