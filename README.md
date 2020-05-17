@@ -753,15 +753,17 @@ eb cli를 로컬환경에서 설치하려면 [eb cli 프로그램 설치](https:
   
 1. `eb init`으로 권한 설정
   ![eb init으로 권한 설정](./assets/images/02_eb_2.png)
+
+2. IAM에서 확인한 `aws-access-key` 와 `aws-secret-key`를 적는다.
   ![eb init으로 권한 설정2](./assets/images/02_eb_3.png)
 
-2. 배포할때 필요한 파일 설명
-   - [.ebextensions/**](./ebextensions): 배포시 필요한 환경 설정을 관리하는 파일. 환경변수(**git에 포함되면 안된다**)와 timezone, 모니터링, 로드밸런서 등등
+3. 배포할때 필요한 파일 설명
+   - [.ebextensions/**](./.ebextensions): 배포시 필요한 환경 설정을 관리하는 파일. 환경변수(**git에 포함되면 안된다**)와 timezone, 모니터링, 로드밸런서 등등
    - [Dockerrun.aws.json](./Dockerrun.aws.json): 도커 실행시 필요한 내용 정의(docker-compose.yml 처럼 실행시 사용할 port, volume, 로깅, 시작 명령어 등을 정의) - [aws문서 - 단일 컨테이너 Docker 구성](https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/single-container-docker-configuration.html)
    - [.ebignore](./.ebignore): 배포시 제외 시킬 파일을 정의, 숨김파일(.으로 시작하는 파일 또는 폴더) 내용은 업로드가 안되는데, `.ebextensions` 내용을 사용하기 위해 몇가지 내용을 뺸다.
 
-3. `eb create`로 첫 배포
+4. `eb create`로 첫 배포
   ![eb init으로 권한 설정2](./assets/images/02_eb_4.png)
 
-4. 다시 배포할 때는 `eb deploy`를 쓰면 된다.
-5. 삭제시에는 `eb teminate`를 쓰면 된다.
+5. 다시 배포할 때는 `eb deploy`를 쓰면 된다.
+6. 삭제시에는 `eb teminate`를 쓰면 된다.
