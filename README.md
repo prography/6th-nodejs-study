@@ -717,8 +717,24 @@ docker-compose up -d
 
 ## 5.ElasticBeanstalk로 서비스 배포하기
 
+[아마존에서 제공하는 ElasticBeanstalk](https://aws.amazon.com/ko/elasticbeanstalk/)를 이용해서 배포를 한다. 왜 이걸 쓰냐면, ec2 인스턴스 받고 개발환경 설정하고 터미널로 접속해서 서버 실행 하고를 하는게 아니라 내 컴퓨터의 로컬 환경에서 터미널 커맨드 하나만로 배포를 할 수 있기 때문에 너무 편해서 쓴다.
+
 ### i.IAM으로 권한 생성하기
+
+eb는 아마존의 콘솔에서도 생성해서 쓸 수 있다. 하지만 cli로 하기 위해서는 IAM 권한이 필요하다. 권한을 위해 사용자 설정을 해보자
+![IAM 권한 생성](./assets/images/01_iam_1.png)
+[v] 대충 IAM 설정하는 화면
+[ ] 대충 ElasticBeanstalkFullAccess 를 넣는 화면
+[ ] 대충 `aws-access-key` 와 `aws-secret-key`를 확인하는 화면
 
 ### ii.eb cli 설치하기
 
+eb cli를 로컬환경에서 설치하려면 [eb cli 프로그램 설치](https://docs.aws.amazon.com/ko_kr/elasticbeanstalk/latest/dg/eb-cli3-install-advanced.html)가 필요하다. python3기반의 프로그램이기 때문에 파이썬 설치를 하는게 좋은데, 파이썬을 굳이 설치하기 싫고 Docker가 있다면, 파이썬 컨테이너를 만들어서 설정을 하는 방법도 있다. [참고](https://github.com/geusan/dockerfiles)
+
+[ ] 대충 ebcli 설치하는 화면
+[ ] 대충 `eb init` 명령어를 실행하는 화면
+[ ] 대충 `eb init` 할때 `aws-access-key`, `aws-secret-key` 를 입력하는 화면
+
 ### iii.배포하기
+
+[ ] 대충 `eb create`로 배포하는 화면
