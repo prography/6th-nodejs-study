@@ -210,7 +210,7 @@ npx jest
 테스트 메서드는 이것 말고도 굉장히 다양하게 있는데, 더 궁금하다면 [jest 홈페이지](https://jestjs.io)를 참고해주세요
 ***
 
-## 1서버 프레임워크
+## 2.서버
 
 이제 서버를 만듭니다. 타입을 썼을 때 도움이 많이 되는 라이브러리를 이용해보겠습니다. 아래의 라이브러리들을 받아주세요
 
@@ -287,7 +287,7 @@ export class TodoController extends BaseController {
 }
 ```
 
-`npx tsc && node dist`를 통해서 서버 실행하는 것을 알 수 있습니다. 
+`npx tsc && node dist`를 통해서 서버 실행하는 것을 알 수 있습니다.
 
 ### ii.e2e 테스트
 
@@ -630,13 +630,14 @@ docker rm {컨테이너 ID 또는 이름}
 
 ### iii.도커 여러개를 한번에 켜고 끄기
 
-도커 여러개를 한번에 켜고 끌 수 있다. docker-compose.yml을 사용하면 가능한다. 스택이나 팟을 만들어도 가능한데 초보자의 입장에선 이것만으로도 가능하다. 
+도커 여러개를 한번에 켜고 끌 수 있다. docker-compose.yml을 사용하면 가능한다. 스택이나 팟을 만들어도 가능한데 초보자의 입장에선 이것만으로도 가능하다.
 
 기본적으로 `--link` 옵션을 사용해야 컨테이너들 끼리 연결이 가능한데, 컨테이너의 종속성이 꼬이는 경우가 생길 수 있다. 이때 도커 네트워크를 만들고 하나의 네트워크에 컨테이너들을 연결해주면 다른 설정을 해주지 않아도 컨테이너끼리 연결이 가능하다.
 
 #### a.docker-compose.yml 작성
 
 [docker-comnpose.yml](./docker-compose.yml) 를 아래처럼 수정해서 써보세요
+
 ```yml
 # docker-compose 버젼
 version: "3.7"
@@ -740,7 +741,6 @@ eb는 아마존의 콘솔에서도 생성해서 쓸 수 있다. 하지만 cli로
 
 6. 사용자 추가 완료 - `aws-access-key` 와 `aws-secret-key`를 기억해두자(복사를 해도 되고, csv 파일을 받아서 저장할 수 있다)
   ![AccessKey와 SecretKey를 확인하는 화면](./assets/images/01_iam_6.png)
-
 
 ### ii.eb cli 설치하기
 
